@@ -1,7 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../utils/animations/login_page_animations.dart';
 
-class LoginPage extends StatelessWidget {
+class AnimatedLoginPage extends StatefulWidget {
+  // AnimatedLoginPage({Key? key}) : super(key: key);
+
+  @override
+  _AnimatedLoginPageState createState() => _AnimatedLoginPageState();
+}
+
+class _AnimatedLoginPageState extends State<AnimatedLoginPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        vsync: this,
+        duration: Duration(seconds: 2),
+        reverseDuration: Duration(milliseconds: 400));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _LoginPage(_controller);
+  }
+}
+
+class _LoginPage extends StatelessWidget {
   //const LoginPage({Key? key}) : super(key: key);
   final Color _primaryColor = Color(0xff47456D);
   final Color _secondaryColor = Color(0xff5E5D8D);
@@ -9,6 +42,15 @@ class LoginPage extends StatelessWidget {
 
   late double _deviceHeight;
   late double _deviceWidth;
+
+  late AnimationController _controller;
+  late EnterAnimation _animation;
+
+  _LoginPage(_controller) {
+    _controller = _controller;
+    _animation = EnterAnimation(_controller);
+    _controller.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +70,7 @@ class LoginPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _avatarWidget(),
-              SizedBox(height: _deviceHeight * 0.05),
+              // SizedBox(height: _deviceHeight * 0.05),
               _emailTextField(),
               _pasawordTextField(),
               SizedBox(height: _deviceHeight * 0.05),
@@ -42,24 +84,33 @@ class LoginPage extends StatelessWidget {
 
   Widget _avatarWidget() {
     double circleD = _deviceHeight * 0.25;
-    return Container(
-      height: circleD,
-      width: circleD,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: _borderColor,
-          width: 2.0,
-          style: BorderStyle.solid,
-        ),
-        color: _secondaryColor,
-        borderRadius: BorderRadius.circular(100),
-        image: DecorationImage(
-          fit: BoxFit.fill,
-          alignment: Alignment.center,
-          image: AssetImage('assets/main_avatar.png'),
-        ),
-      ),
-    );
+    return AnimatedBuilder(
+        animation: _animation.controller,
+        builder: (context, widget) {
+          return Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.diagonal3Values(
+                _animation.circleSize.value, _animation.circleSize.value, 1),
+            child: Container(
+              height: circleD,
+              width: circleD,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: _borderColor,
+                  width: 2.0,
+                  style: BorderStyle.solid,
+                ),
+                color: _secondaryColor,
+                borderRadius: BorderRadius.circular(100),
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  alignment: Alignment.center,
+                  image: AssetImage('assets/main_avatar.png'),
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   Widget _emailTextField() {
