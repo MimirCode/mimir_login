@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mimir_login/pages/profile_page.dart';
 import '../utils/animations/login_page_animations.dart';
 
 class AnimatedLoginPage extends StatefulWidget {
@@ -74,7 +75,7 @@ class _LoginPage extends StatelessWidget {
               _emailTextField(),
               _pasawordTextField(),
               SizedBox(height: _deviceHeight * 0.05),
-              _loginButtonWidget(),
+              _loginButtonWidget(context),
             ],
           ),
         ),
@@ -163,7 +164,7 @@ class _LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _loginButtonWidget() {
+  Widget _loginButtonWidget(BuildContext context) {
     return MaterialButton(
       minWidth: _deviceWidth * 0.4,
       height: _deviceHeight * 0.055,
@@ -177,7 +178,14 @@ class _LoginPage extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) {
+            return ProfilePage();
+          }),
+        );
+      },
     );
   }
 }
