@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mimir_login/pages/profile_page.dart';
+// import 'package:mimir_login/pages/profile_page.dart';
 import '../utils/animations/login_page_animations.dart';
+import '../utils/page_routes/fade_page_route.dart';
 
 class AnimatedLoginPage extends StatefulWidget {
   // AnimatedLoginPage({Key? key}) : super(key: key);
@@ -181,9 +183,7 @@ class _LoginPage extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (BuildContext context) {
-            return ProfilePage();
-          }),
+          FadePageRoute(ProfilePage()),
         );
       },
     );
