@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mimir_login/pages/login_page.dart';
+import 'package:mimir_login/utils/page_routes/fade_page_route.dart';
+import '../utils/animations/login_page_animations.dart';
 
-class ProfilePage extends StatelessWidget {
+class AnimatedProfilePage extends StatefulWidget {
+  // AnimatedProfilePage({Key? key}) : super(key: key);
+
+  @override
+  _AnimatedProfilePageState createState() => _AnimatedProfilePageState();
+}
+
+class _AnimatedProfilePageState extends State<AnimatedProfilePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+      reverseDuration: Duration(milliseconds: 500),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _ProfilePage(_controller);
+  }
+}
+
+// ignore: must_be_immutable
+class _ProfilePage extends StatelessWidget {
   // const ProfilePage({Key? key}) : super(key: key);
 
   final Color _primaryColor = Color(0xff5E5D8D);
@@ -10,6 +47,14 @@ class ProfilePage extends StatelessWidget {
 
   late double _deviceHeight;
   late double _devicewidth;
+
+  AnimationController _controller;
+  late EnterAnimation _animation;
+
+  _ProfilePage(this._controller) {
+    _animation = EnterAnimation(_controller);
+    _controller.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,24 +85,33 @@ class ProfilePage extends StatelessWidget {
 
   Widget _avatarWidget() {
     double circleD = _deviceHeight * 0.25;
-    return Container(
-      height: circleD,
-      width: circleD,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: _borderColor,
-          width: 2.0,
-          style: BorderStyle.solid,
-        ),
-        color: _secondaryColor,
-        borderRadius: BorderRadius.circular(100),
-        image: DecorationImage(
-          fit: BoxFit.fill,
-          alignment: Alignment.center,
-          image: AssetImage('assets/main_avatar.png'),
-        ),
-      ),
-    );
+    return AnimatedBuilder(
+        animation: _animation.controller,
+        builder: (context, widget) {
+          return Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.diagonal3Values(
+                _animation.circleSize.value, _animation.circleSize.value, 1),
+            child: Container(
+              height: circleD,
+              width: circleD,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: _borderColor,
+                  width: 2.0,
+                  style: BorderStyle.solid,
+                ),
+                color: _secondaryColor,
+                borderRadius: BorderRadius.circular(100),
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  alignment: Alignment.center,
+                  image: AssetImage('assets/main_avatar.png'),
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   Widget _userNameWidget() {
@@ -87,8 +141,12 @@ class ProfilePage extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      onPressed: () {
-        Navigator.pop(context);
+      onPressed: () async {
+        await _controller.reverse();
+        Navigator.pop(
+          context,
+          FadePageRoute(AnimatedLoginPage()),
+        );
       },
     );
   }

@@ -21,8 +21,8 @@ class _AnimatedLoginPageState extends State<AnimatedLoginPage>
     super.initState();
     _controller = AnimationController(
         vsync: this,
-        duration: Duration(seconds: 2),
-        reverseDuration: Duration(milliseconds: 400));
+        duration: Duration(seconds: 1),
+        reverseDuration: Duration(milliseconds: 500));
   }
 
   @override
@@ -37,6 +37,7 @@ class _AnimatedLoginPageState extends State<AnimatedLoginPage>
   }
 }
 
+// ignore: must_be_immutable
 class _LoginPage extends StatelessWidget {
   //const LoginPage({Key? key}) : super(key: key);
   final Color _primaryColor = Color(0xff47456D);
@@ -49,8 +50,7 @@ class _LoginPage extends StatelessWidget {
   late AnimationController _controller;
   late EnterAnimation _animation;
 
-  _LoginPage(_controller) {
-    _controller = _controller;
+  _LoginPage(this._controller) {
     _animation = EnterAnimation(_controller);
     _controller.forward();
   }
@@ -180,10 +180,11 @@ class _LoginPage extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      onPressed: () {
+      onPressed: () async {
+        await _controller.reverse();
         Navigator.push(
           context,
-          FadePageRoute(ProfilePage()),
+          FadePageRoute(AnimatedProfilePage()),
         );
       },
     );
